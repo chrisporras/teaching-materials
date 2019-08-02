@@ -11,4 +11,4 @@ Designed by University of Chicago undergraduate student Christian Porras for use
   * A document exploring the story of the Kennewick Man and walking students through the history and scientific approaches to identifying his ancestry.
 
 **References:**
- 1. [1000 Genomes Project Consortium][1000 Genomes Project Consortium, Adam Auton, Lisa D. Brooks, Richard M. Durbin, Erik P. Garrison, Hyun Min Kang, Jan O. Korbel, et al. 2015. “A Global Reference for Human Genetic Variation.” Nature 526 (7571): 68–74.]
+ 1. 1000 Genomes Project Consortium, Adam Auton, Lisa D. Brooks, Richard M. Durbin, Erik P. Garrison, Hyun Min Kang, Jan O. Korbel, et al. 2015. “A Global Reference for Human Genetic Variation.” Nature 526 (7571): 68–74.
