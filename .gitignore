@@ -1,0 +1,8 @@
+# Unconditionally ignore
+*.ipynb_checkpoints/
+*.DS*
+*._.DS*
+*/nb-*
+
+
+#Exception
