@@ -1,0 +1,278 @@
+# Computational Lab - PRE LAB
+# CAAP Biology - Summer 2018
+Author: Chris Porras
+
+###### YOUR NAME HERE ######
+
+
+## Grading:
+* 15 completion points
+
+## Submitting:
+Submit this completed .Rmd file in the pre-lab assignments tab by the end of lab. 
+
+
+## Pre-lab R crash course ##
+
+Welcome to R! This will be a brief crash course of the basic computational techniques that we will be using in this week's lab. Please work through this pre-lab assignment BEFORE starting the lab. Keep in mind that this pre-lab assignment will be 15 completion points. 
+
+Some quick vocabulary:
+* chunk: the darker grey space denoted by ``` is a convenient container for you to write your code inside of. Clicking on the green arrow on the top-right of the chunk runs just the segment of code that        you write inside of it. You can also use ctrl + shift + enter to run the current chunk. Chunks display their output in a window below them.
+
+* bug: any error that may occur when you run code. Bugs will often result in error messages displayed in the chunk which will need to be troubleshooted before the chunk will run. 
+
+* argument: a variable, vector, matrix, or parameter, that is fed into a function for a specified output.
+
+* func(): the () denote functions. Functions can be fed inputs, or arguments, and will perform operations and provide an output when run.
+
+* initialize or preallocate: in our case, this describes the process by which we create a blank vectors or matrices to contain our desired output after performing our desired operations. Preallocation sets aside a place in memory for our code to send its output. This is particularly important when we run loops.
+
+* loop: a segment of code that iterates, or repeats, whatever code is contained within it based on predetermined rules. 
+
+* nested loop: a loop within a loop. The innermost loop runs first for however many times the outermost loop specifies. This is useful for iterating over multiple dimensions (like in a 2D matrix). 
+
+
+
+1. Variable assignments and arithmetic 
+
+Variables hold data in forms like integers, strings, decimals, etc. You can assign a value to variables with the "<-" assignment operator. Values assigned to variables are called 'parameters' or 'constants' and stored in memory to be 'called' by their names in other operations. 
+
+When performing assignemnts, the names don't really matter as long as you are consistent with them. It is good coding practice to use descriptive but brief names. 
+
+You can do standard arithmetic with variables and the (+,-,*,/,^) operators. exp() is the exponential function. The variable provided in the exp() raises e^ to the value of the variable. 
+
+```{r}
+##### Examples #####
+a  <- 3
+b  <- 2
+
+a + b
+a * b
+a^b
+exp(a)
+
+```
+
+Write code using variable assignments to show the results of the following:
+
+5^27
+
+e^(27)
+
+5/27
+
+
+
+```{r}
+###### YOUR CODE HERE ######
+```
+Answers:
+[1] 7.450581e+18
+[1] 532048240602
+[1] 0.1851852
+
+2. Creating vectors and vector arithmetic 
+Vectors can be thought of as a 1-dimensional list of values. Vectors can be created using the c() to 'combine' values in a list. The colon : can also create a vector of values from start:stop counting by 1. Arithmetic can be carried out with vectors in a similar way as long as the length rules are upheld (ie. two vectors of different lengths cannot be added together). 
+
+print() outputs the values in whatever argument is passed through
+
+```{r}
+##### Examples #####
+myvec <- c(2,4,1,3)
+
+vec2 <- 1:4
+
+output <- myvec + vec2
+
+print(output)
+```
+
+Write code to create a vector of values from 2 to 5 counting by 1, and multiply every value in this vector by 2.
+
+
+```{r}
+###### YOUR CODE HERE ######
+```
+Answers:
+[1]  4  6  8 10
+
+3. Vector indexing, using rep() and for loops
+Indices represent positions along vectors and are denoted by [] in R. Every value in a vector has an index that corresponds to its position in the list. For example, the first position in a vector can be accessed by vectorname[1]. 
+
+The rep() function takes two arguments, the value to be repeated, and the number of times to repeat. It outputs a vector of the repeated value. We use it here to initialize a 'blank' vector (just zeroes). length() gives the length of the vector specified.
+
+for loops repeat the code within them based on a counting variable (below we use 'i') and a vector that specifies the range to be repeated over. We use it here to repeatedly multiply each consecutive value in popvec by 2 and report the result to the subsequent index. 
+
+Here we model a population of 50 mitotic cells that divide into two daughter cells every time step:
+
+$$ f(x) = n_0*2^x $$
+
+```{r}
+##### Examples #####
+num_timesteps <- 10
+
+popvec <- rep(0,num_timesteps) #blank vector of zeroes with length num_zeroes
+
+init_pop <- 100
+
+popvec[1] <-  init_pop # change the first value in popvec to be 5. 
+
+for( i in 1:length(popvec)){ # for every index in popvec...
+  popvec[i+1] <-popvec[i] * 2 # multiply the previous value by 2 and report the result to the next index 
+}
+
+
+print(popvec) #print entire vector after simulation
+
+print(paste("final population size is ",popvec[length(popvec)])) # print a combination of text and the last value in popvec 
+
+```
+
+Create a similar model for the division of sex cells with 10 progenitor cells. Assume that both cell divisions occur every time step.
+
+How many sex cells are there after 10 time steps?
+
+```{r}
+###### YOUR CODE HERE ######
+```
+
+Answer: 10485760
+
+
+4. Creating matrices and indexing within matrices
+
+Matrices introduce a second dimension for us to work with. For the purposes of our lab, we'll use matrices essentially as a box for column vectors. Instead of rerunning the simulation for every set of parameters that we want, we can use matrices to contain all of the resulting vectors. 
+
+We can initialize matrices with the matrix() function. This function takes the following arguments: value or values to fill the matrix with, number of rows, number of columns. 
+
+Indexing in matrices is similar to indexing in vectors. The typical syntax is matrixname[rownumber,columnnumber]. For example if you want to access the value in the first row of the second column of the matrix, use matname[1,2].
+
+
+```{r}
+##### Examples #####
+my_matrix <- matrix(0,nrow = 3,ncol = 3) #initialize a 3 by 3 blank matrix
+
+my_matrix[1,1] <- 1 # Change the value of the first row, first column to 1
+
+my_matrix[2,] <-c(2,3,4) # change the second row to contain the values of the vector <2,3,4>
+
+print(my_matrix)
+
+
+```
+
+
+Create a 2 X 4 matrix (rows X columns), populate the first column with the vector <1,3> and the first row with the vector <1,2,3,4> and multiply all of the values in the matrix by 10.  
+
+```{r}
+###### YOUR CODE HERE ######
+```
+Answer: 
+     [,1] [,2] [,3] [,4]
+[1,]   10   20   30   40
+[2,]   30    0    0    0
+
+
+
+5. Populating matrices with nested for loops and plotting data
+
+Nested for loops allow us to iterate over both the rows and columns of a matrix in one go. 
+
+We can make plots using the plot() function. This function takes many arguments, but the most important are as follows:
+plot(xvalues , yvalues , col = 'color of choice' , type = 'line', main = 'title text', xlab = 'xaxis label',ylab = 'yaxislabel')
+
+The function lines() allows us to overlay lines on the same plot. It's arguments are pretty much the same as plot().
+
+The function legend() creates a nice legend. It also has many arguments and so I will be providing them in the chunks.
+
+
+Let's create the following model:
+
+Every year, the population of mice in a certain environment doubles. Unfortunately, 10 mice will be eaten by snakes each year. Let's say there are 3 mice populations now with population sizes of 10, 15, and 20, respectively. 
+What will happen to these mice populations after 5 years?
+
+$$  f(x) = n_0 * 2^x - 10  $$
+
+```{r}
+##### Examples #####
+
+init_pop <- c(10,15,20) # vector of initial pop sizes
+
+num_timesteps <- 5 # number of time steps
+
+popsize_mat <- matrix(0,nrow = num_timesteps,ncol = length(init_pop)) # initialize a blank matrix based on the parameters above 
+
+
+popsize_mat[1,] <- init_pop # set first row to be the initial pop sizes
+
+
+for( j in 1:ncol(popsize_mat)){ # for every column
+  for( i in 1:(nrow(popsize_mat)-1)){ # for every row (the -1 is a correction to match up the number of times iterated to account for the space taken by the preset initial value)
+    popsize_mat[i+1,j] <- popsize_mat[i,j]*2 - 10 # perform the operation for the specified cell in the matrix and output the result to the next row in the same column 
+  }
+}
+
+### Plotting Results ###
+
+plot(popsize_mat[,1],type='l',col='black',ylim = c(0.5*min(popsize_mat),max(popsize_mat)), main = "Mice pop size over time", xlab= "years", ylab="population size") # make plot
+lines(popsize_mat[,2],type = "l", col = 'red')# overlay second line
+lines(popsize_mat[,3],type = "l", col = 'blue') # overlay 3rd line
+  legend("bottomright",legend = popsize_mat[1,], col = c('black','red','blue'),lty = 1,cex = 0.8, title = "Initial pop values", text.font = 4, box.lty = 0, inset = 0.02) # make legend
+
+print(popsize_mat)
+```
+
+Create the following model:
+
+Every day, the population of bacteria in a culture doubles. Before the cells divide, 100 bacteria will be killed by penicillin. Another 100 bacteria are killed at the end of each day after division. There are 5 bacteria cultures with population sizes of 100, 200,300,400 and 500, respectively. 
+What will happen to these populations after 5 days?
+
+
+```{r}
+###### YOUR CODE HERE ######
+```
+Answer:
+pop sizes after 5 days for each initial pop:
+-2900 -1300  300 1900 3500 (negative pop size is basically 0)
+
+6. Using rbinom() as a random sample generator
+
+For our lab, we'll want to simulate genetic drift through binomial random sampling. The binomial distribution B(n,p) takes two parameters: n = the size of the pool to sample from, and p = the probability of sampling a desired object. Let's think of this as a bag of red and blue marbles. If we know that the bag can hold 10 marbles, and that 6 of the marbles are red, then we can create a random sampling distribution for red marbles with B(10,0.6). 
+
+In R, the rbinom() function lets us randomly generate a binomial sample by specifying n and p for B(n,p). We can also provide rbinom() the number of samples that we want to take from the distribution.
+
+For example: if there is a bag of 4 red marbles and 6 blue, then we run rbinom(1,10,0.4) we will get random numbers between 1 and 10 that should average to be around 4. 
+
+
+```{r}
+##### Examples #####
+number_samples <- 100 # number of samples to draw from bag with replacement
+ 
+num_redmarbles_drawn = rep(0,number_samples) # initialize vector
+
+size_samplingpool <- 10 # a pool of 10 marbles 
+
+prob_reds <- 0.7 # probability of getting a red marble
+
+
+for(i in 1:length(num_redmarbles_drawn)){
+ num_redmarbles_drawn[i] <- rbinom(1,size_samplingpool,prob_reds) # for every index in vector, draw 1 sample from the distribution of red marbles in the bag (a number between 1 and 10 that averages 7) 
+}
+
+plot(num_redmarbles_drawn, main = "title", xlab ="x_axis_label", ylab= "y_axis_label", col = "red")
+
+
+print(mean(num_redmarbles_drawn))
+```
+
+
+Let's say there are 100 people in a population and we want to draw samples from a single locus with only 2 possible alleles, A and B. 
+
+If the allele frequency of A is 0.79, create a vector of 10 random samples of B.  
+
+```{r}
+###### YOUR CODE HERE ######
+```
+
+Answer: 
+10 random numbers between 1 and 100 with an average around the allele frequency of B.

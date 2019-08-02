@@ -1,0 +1,444 @@
+# Computational Lab
+# CAAP Biology - Summer 2018
+Author: Chris Porras
+
+###### YOUR NAME HERE ######
+
+
+## Grading:
+* Part 1: 45 pts (15pts per pair of chunks)
+* Part 2: 15 pts
+* Total: 60 pts
+
+
+## Submitting:
+Submit this edited .Rmd file with your name in the title, through the submission link on Canvas before the deadline.
+
+
+## Background:
+The Wright-Fisher model, named after geneticists Sewall Wright and Ronald A. Fisher, describes the random sampling of alleles in a population. In its most basic form, the model does not incorporate selection, mutation, migration, or other more complex evolutionary forces. However, we can use the model to study how introducing these forces impacts the allele frequency fluctuations within a population.
+
+Whereas the Hardy-Weinberg equilibrium tells us what to expect from a population that is *not* evolving, the Wright-Fisher model tells us what to expect from a population that *is* evolving. Throughout this lab, we will cumulatively address each of the evolutionary forces that Hardy-Weinberg equilibrium excludes (except for migration) and will determine the influence that each of these has on an evolving population. 
+
+From question 6 of the pre-lab assignment:
+For our lab, we'll want to simulate genetic drift through binomial random sampling. The binomial distribution B(n,p) takes two parameters: n = the size of the pool to sample from, and p = the probability of sampling a desired object. Let's think of this as a bag of red and blue marbles. If we know that the bag can hold 10 marbles, and that 6 of the marbles are red, then we can create a random sampling distribution for red marbles with B(10,0.6). 
+
+The Wright-Fisher model allows us to compute the probability of transitioning from an allele frequency of p_i at generation (t) to p_j at generation (t+1). We can sample from the binomial distribution with size = 2N, the total number of alleles in the population, and probability of success = the allele frequency at generation (t).
+
+In other words:
+$$  P_{t+1} | P_t = p_t \sim B(2N, p_t) $$
+Where P is the set of allele frequencies at each generation, p is an element of P, and N is the number of diploid individuals in the population.
+
+NOTE: p_t is the allele frequency of the allele of interest. We only need to sample 1 of the 2 possible alleles from the population and we'll call that our 'allele of interest'.  
+
+
+
+
+## Part 1: Modeling fluctuations in allele frequencies
+
+In this section, we will design multiple Wright-Fisher simulations to cumulatively incorporate genetic drift, selection, and mutation. We will test various parameter inputs and multiple runs of the simulation to describe the trends of each simulation.
+
+
+### Wright-Fisher simulation with genetic drift only 
+
+Look back at sections 3 and 6 from the pre-lab. We will use vectors, single for loops, and binomial sampling to create the following WF model of genetic drift. 
+
+Recall that in R, the rbinom() function lets us randomly generate a binomial sample by specifying n and p for B(n,p). We can also provide rbinom() the number of samples that we want to take from the distribution. 
+
+For example: if there is a bag of 4 red marbles and 6 blue, then we run rbinom(1,10,0.4) we will get random numbers between 1 and 10 that should average to be around 4. If we want to convert these samples back into frequencies, we will need to divide by the total size of the bag. A line of code that would accomplish this for the marble example looks like:
+
+$$ rbinom(1,10,0.4)/(10) $$
+
+Tasks:
+1) Set up a Wright-Fisher simulation of genetic drift with the following parameters:
+  * population size of 50 diploid individuals
+  * initial frequency of the allele of interest is 0.5
+  * number of generations to be simulated (timesteps) is 500
+    a) Be sure to pre-allocate a blank vector to hold the allele frequencies and assign the first value to be the initial frequency
+    b) Plot the resulting vector of allele frequencies and make sure to set a plot title, axes labels, and the arguments type = 'l' and col = '<your color of choice>' 
+  
+2) Describe the behavior of the plot that you produced. 
+  a) Does the allele frequency fix (go to 1 or 0 and remain there)? If so, by what generation?
+  
+3) Run chunk multiple times and explain how often frequency goes to 0 or 1
+
+4) Try different initial frequency values and explain what happens
+
+```{r}
+################ Assign parameters and initialize data frame ##########
+
+N <- 50 #Population size
+
+num_gen <- 500 # number of generations simulated
+
+p_0 <- 0.5 #Initial allele frequency 
+
+p <- rep(0,num_gen) #preallocate vector of allele frequencies
+
+p[1] <- p_0 #Assign initial allele frequency
+
+
+
+########## Run simulation ################
+for(i in 1:num_gen){ #for every generation of the simulation
+  p[i+1] <- rbinom(1, 2*N, p[i])/(2*N) #Genetic drift sampling and convert to frequency
+}
+
+
+############ Make plot ################
+plot(p, type = "l", col = "red", main = "WF Simulation of genetic drift",xlab = "generation",ylab = "allele frequency")
+
+
+
+```
+#### YOUR ANSWERS HERE ####
+
+
+
+### Trying a wider range of parameters
+
+Now we want to re-run the simulation above with a range of values for population size. Instead of manually changing the value in the chunk above, we can write a new chunk to simulate genetic drift for each value in a vector of population size values. This is much more efficient! We'll need to use matrices and a nested for loop for this, so look back at pre-lab question 5.
+
+Some code you'll need:
+Just make sure to change the bits in < > to whatever is specific to your chunk.
+
+  plot( < your freq vector > , type = "n", ylim = c(0,1), main = "WF Simulation of genetic drift",xlab =     "generation",ylab = "allele frequency")
+
+  colors <- rainbow(< your variable for number of repitions for the outer loop > )
+
+* Include these lines ^^^^^ right before you create the nested for loop so that we pre-set a plot to overlay lines on top of. 
+
+  lines(<your freq matrix with proper indexing > ,type = "l", col = colors[<your outer loop counting        variable>])# make plot
+  legend("bottomright",legend = <your vector of pop sizes>, col = colors,lty = 1,cex = 0.6, title = "N      values", text.font = 4, box.lty = 0, inset = 0.02)
+  
+* Include these lines ^^^^^ right after your inner for loop but still within the outer for loop. This will plot and overlay lines for each value of pop size. 
+
+
+
+Tasks:
+1) Expand code from chunk above to accommodate the following range of population size values:
+ * 50,100,500,1000,5000
+ * Keep all of the other parameters the same as before
+
+2) What effect does increasing the population size have on the model? 
+
+3) Which alleles will become fixed faster, those in larger or smaller populations?
+
+
+```{r}
+################ Assign parameters and initialize data frame ##########
+
+N <- c(50,100,500,1000,5000) #Population size vector
+
+num_reps <- length(N)
+
+num_gen <- 500 # number of generations simulated
+
+p_0 <- 0.5 #Initial allele frequency 
+
+p <- rep(0,num_gen + 1) #preallocate vector of allele frequencies
+
+p[1] <- p_0 #Assign initial allele frequency
+
+pmat <- matrix(0,nrow = length(p), ncol = num_reps)
+
+plot(p, type = "n", ylim = c(0,1), main = "WF Simulation of genetic drift",xlab = "generation",ylab = "allele frequency")
+
+colors <- rainbow(num_reps)
+
+########## Run simulation ################
+for(n in 1:num_reps){ #repeat loop for multiple simulations
+  for(i in 1:num_gen){ #for every generation of the simulation
+    p[i+1] <- rbinom(1, 2*N[n], p[i])/(2*N[n]) #sample from population for offspring and convert to frequency
+  }
+  pmat[,n] <- p #insert p vector into column of matrix
+  lines(pmat[,n],type = "l", col = colors[n])# make plot
+  legend("bottomright",legend = N, col = colors,lty = 1,cex = 0.6, title = "N values", text.font = 4, box.lty = 0, inset = 0.02)
+}
+
+```
+#### YOUR ANSWERS HERE ####
+
+
+### Introducing selection
+
+So we've modeled genetic drift, and that's great, but we want to make things a little more interesting. Let's introduce selection pressure. 
+
+This will involve an adaptation of the standard binomial sampling definition of the Wright-Fisher model (the formula I wrote in the Background section above):
+
+$$  P_{t+1} | P_t = p_t \sim B(2N, p_t + s\cdot p_t\cdot (1-p_t)) $$
+Where s is the selection coefficient which determines the strength of selection (positive or negative) on the allele of interest.
+
+Now all we need to do is assign a selection coefficient and add this new selection term to the binomial sampling from the first chunk.
+
+
+Tasks:
+1) Run simulation with selection introduced and the same parameters from chunk 1.
+  * Assign a value of 0.3 to a variable for the selection coefficient
+
+2) Describe the behavior of the plot that you produced. 
+  a) Does the allele frequency fix (go to 1 or 0 and remain there)? If so, by what generation?
+  
+3) Run chunk multiple times and explain how often frequency goes to 0 or 1
+
+4) Try different selection coefficient values and explain what happens (try negative values too!)
+
+```{r}
+################ Assign parameters and initialize data frame ##########
+
+N <- 50 #Population size
+
+s <- 0.3 #Selection coefficient (closer to 1 means selection favors allele)
+
+num_gen <- 500 # number of generations simulated
+
+p_0 <- 0.5 #Initial allele frequency 
+
+p <- rep(0,num_gen) #preallocate vector of allele frequencies
+
+p[1] <- p_0 #Assign initial allele frequency
+
+
+
+########## Run simulation ################
+for(i in 1:num_gen){ #for every generation of the simulation
+  p[i+1] <- rbinom(1, 2*N, p[i] +s*p[i]*(1-p[i]))/(2*N) #Genetic drift and selection and convert to frequency
+}
+
+
+############ Make plot ################
+plot(p, type = "l", col = "red",  main = "WF Simulation of genetic drift",xlab = "generation",ylab = "allele frequency")
+
+```
+#### YOUR ANSWERS HERE ####
+
+
+
+### Trying a wider range of parameters
+
+Now that we have selection introduced, we want to make a nice plot of many overlayed lines with various selection coefficient values to compare the effects of s. Just like what we did in chunk 2!
+
+Copy your code from chunk 2, but instead of using a vector of pop size values, use a vector of values for s. Make sure to update your vector indexing to note the change. 
+
+Tasks:
+1) Expand code from chunk above to accommodate the following range of selection coefficient values:
+ * 0.1, 0.8, 0, -0.1, -0.8
+ * Keep all of the other parameters the same as before
+
+2) What happens when s > 0, s < 0 and s = 0? 
+
+```{r}
+################ Assign parameters and initialize data frame ##########
+
+N <- 50 #Population size vector
+
+s <- c(0.1,0.8,0,-0.1,-0.8)
+
+num_reps <- 5
+
+num_gen <- 500 # number of generations simulated
+
+p_0 <- 0.5 #Initial allele frequency 
+
+p <- rep(0,num_gen + 1) #preallocate vector of allele frequencies
+
+p[1] <- p_0 #Assign initial allele frequency
+
+pmat <- matrix(0,nrow = length(p), ncol = num_reps)
+
+plot(p, type = "n", ylim = c(0,1), main = "WF Simulation of genetic drift",xlab = "generation",ylab = "allele frequency")
+
+colors <- rainbow(num_reps)
+
+########## Run simulation ################
+for(n in 1:num_reps){ #repeat loop for multiple simulations
+  for(i in 1:num_gen){ #for every generation of the simulation
+    p[i+1] <- rbinom(1, 2*N, p[i] + s[n]*p[i]*(1-p[i]))/(2*N) #sample from population for offspring and convert to frequency
+  }
+  pmat[,n] <- p #insert p vector into column of matrix
+  lines(pmat[,n],type = "l", col = colors[n])# make plot
+  legend("bottomright",legend = s, col = colors,lty = 1,cex = 0.6, title = "s values", text.font = 4, box.lty = 0, inset = 0.02)
+}
+
+```
+#### YOUR ANSWERS HERE ####
+
+
+### Introducing mutation
+We're not done yet! Let's throw mutation into the model just for fun. Mutation we'll be used in our case as the random chance for some of the allele of interest to turn into the other allele and for some of the other allele to turn into the allele of interest. The mutation rate will therefore be symmetric. 
+
+We're gonna need to use a little trick to get this to work out, so I'll just supply the line of code that gets the job done:
+
+ p[i+1] <- (p[i+1] - sum(runif(p[i+1]) < mu) + sum(runif(2*N - p[i+1]) < mu))/(2*N)
+ 
+* Include this line ^^^ inside of the single for loop but after the rbinom() line. Make sure to not divide the rbinom() line by the total population size and instead save that step for this line as shown above ^^^. 
+
+Now we just need to supply another coefficient, called mu, to define the mutation rate.  
+
+Tasks:
+1) Run simulation with mutation introduced and old parameters
+  * Assign a mutation rate, mu, of 0.001
+
+2) Describe the behavior of the plot that you produced. 
+  a) Does the allele frequency fix (go to 1 or 0 and remain there)? If so, by what generation?
+  b) Does it stay fixed?
+  
+3) Run chunk multiple times and explain how often frequency goes to 0 or 1 and how long it stays there
+
+4) Try different mu values and explain what happens (mu must be between 0 and 1)
+
+```{r}
+################ Assign parameters and initialize data frame ##########
+
+N <- 50 #Population size
+
+s <- 0.3 #Selection coefficient (closer to 1 means selection favors allele)
+
+mu <- 0.001 #Mutation rate (probability of allele entering and exiting gene pool by chance)
+
+num_gen <- 500 # number of generations simulated
+
+p_0 <- 0.5 #Initial allele frequency 
+
+p <- rep(0,num_gen) #preallocate vector of allele frequencies
+
+p[1] <- p_0 #Assign initial allele frequency
+
+
+
+########## Run simulation ################
+for(i in 1:num_gen){ #for every generation of the simulation
+  p[i+1] <- rbinom(1, 2*N, p[i] +s*p[i]*(1-p[i]))  #genetic drift and selection
+  p[i+1] <- (p[i+1] - sum(runif(p[i+1]) < mu) + sum(runif(2*N - p[i+1]) < mu))/(2*N) #mutation
+}
+
+
+############ Make plot ################
+plot(p, type = "l", col = "red",  main = "WF Simulation of genetic drift",xlab = "generation",ylab = "allele frequency")
+
+```
+#### YOUR ANSWERS HERE ####
+
+
+
+### Trying a wider range of parameters
+
+You know the drill!
+
+Tasks:
+1) Expand code from chunk above to accommodate the following range of mu values:
+ * 0.001, 0.001, 0.01, 0.1, 0.5
+ * Keep all of the other parameters the same as before
+
+2) What happens when mu is large vs. when mu is small? 
+
+3) Try different values for the population size and report the effect of mutation on large and small populations
+
+```{r}
+################ Assign parameters and initialize data frame ##########
+
+N <- 50 # Population size vector
+
+s <- 0.1 # selection
+
+mu <- c(0.001, 0.001, 0.01, 0.1, 0.5) # mutation rate
+
+num_reps <- 5
+
+num_gen <- 500 # number of generations simulated
+
+p_0 <- 0.5 #Initial allele frequency 
+
+p <- rep(0,num_gen + 1) #preallocate vector of allele frequencies
+
+p[1] <- p_0 #Assign initial allele frequency
+
+pmat <- matrix(0,nrow = length(p), ncol = num_reps)
+
+plot(p, type = "n", ylim = c(0,1), main = "WF Simulation of genetic drift",xlab = "generation",ylab = "allele frequency")
+
+colors <- rainbow(num_reps)
+
+########## Run simulation ################
+for(n in 1:num_reps){ #repeat loop for multiple simulations
+  for(i in 1:num_gen){ #for every generation of the simulation
+    p[i+1] <- rbinom(1, 2*N, p[i] +s*p[i]*(1-p[i])) #genetic drift and selection
+    p[i+1] <- (p[i+1] - sum(runif(p[i+1]) < mu[n]) + sum(runif(2*N - p[i+1]) < mu[n]))/(2*N) #mutation
+  }
+  pmat[,n] <- p #insert p vector into column of matrix
+  lines(pmat[,n],type = "l", col = colors[n])# make plot
+  legend("bottomright",legend = mu, col = colors,lty = 1,cex = 0.6, title = "mu values", text.font = 4, box.lty = 0, inset = 0.02)
+}
+
+```
+#### YOUR ANSWERS HERE ####
+
+
+
+## Part 2: Calculating average site frequency spectrum
+We're almost done! So let's discuss a new topic.
+
+Wright-Fisher simulations are helpful to see the change of allele frequencies in a population over time. Another useful tool to help visualize overall trends is the average frequency spectrum.
+
+The average frequency spectrum is essentially a histogram of the output from a Wright-Fisher simulation that shows which allele frequencies are most common throughout each generation.
+
+Before we can create an accurate spectrum, we want to make sure that we're only looking at frequencies from generations after the "burn-in" period. You should have noticed that the combination of genetic drift, mutation, and selection trends eventually to fixation and remains around there even if it sometimes bounces back. The time that it takes for the frequency to remain near fixation is the "burn-in" period. We'll need to define a new parameter for burnin to solve this.
+
+To create a spectrum, copy over your last chunk and plop these lines at the end of it:
+
+freqspec <- as.vector(<your matrix of frequencies>[burnin:length(<your frequency vector>),])
+hist(freqspec, main = "Average site frequency spectrum", xlab = "frequency", ylab = "number of generations with frequency", col = "red")
+
+
+
+Tasks:
+1) Run simulation and make spectrum
+  * Assign a burnin of 100
+
+2) Describe the character of the histogram
+  
+3) Re-run this chunk with different values of N, mu, and s and report what happens for each set of values you try. 
+
+```{r}
+################ Assign parameters and initialize data frame ##########
+
+N <- 50 #Population size
+
+s <- 0.3 #Selection coefficient (closer to 1 means selection favors allele)
+
+mu <- 0.001 #Mutation rate (probability of allele entering and exiting gene pool by chance)
+
+num_reps <- 5
+
+num_gen <- 10000 # number of generations simulated
+
+p_0 <- 0.5 #Initial allele frequency 
+
+p <- rep(0,num_gen + 1) #preallocate vector of allele frequencies
+
+p[1] <- p_0 #Assign initial allele frequency
+
+pmat <- matrix(0,nrow = length(p), ncol = num_reps)
+
+burnin <- 100 # choose generation number to calculate spectrum from (want to remove initial noise)
+
+########## Run simulation ################
+for(n in 1:num_reps){ #repeat loop for multiple simulations
+  for(i in 1:num_gen){ #for every generation of the simulation
+    p[i+1] <- rbinom(1, 2*N, p[i] +s*p[i]*(1-p[i])) #genetic drift and selection
+    p[i+1] <- (p[i+1] - sum(runif(p[i+1]) < mu) + sum(runif(2*N - p[i+1]) < mu))/(2*N) #mutation
+  }
+  pmat[,n] <- p #insert p vector into column of matrix
+}
+
+
+########## Create avg freq spectrum ###############
+freqspec <- as.vector(pmat[burnin:length(p),])
+hist(freqspec, main = "Average site frequency spectrum", xlab = "frequency", ylab = "number of generations with frequency", col = "red")
+
+
+```
+#### YOUR ANSWERS HERE ####
+
+
+Thanks for a great summer!
