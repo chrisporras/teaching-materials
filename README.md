@@ -3,7 +3,7 @@ A repo for storing scripts used in teaching modules.
 Designed by University of Chicago undergraduate student Christian Porras for use in the 2018 and 2019 Chicago Academic Achievement Program (CAAP) summer biology courses.
 
 **Wright-Fisher Lab:**
-  * A pre-lab assignment meant to introduce students to writing R simple scripts
+  * A pre-lab assignment meant to introduce students to writing simple R scripts
   * A .Rmd applying the methods covered in the pre-lab to implement the classic Wright-Fisher diffusion model of population genetics. Students will examine the fluctuation of simulated allele frequencies over time in response to changes in mutation rate and selection coefficient.
 
 **Kennewick Man Lab:**
