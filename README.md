@@ -1,4 +1,5 @@
 # teaching-materials
+[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/chrisporras/teaching-materials/HEAD?filepath=CAAP19_KennewickManPCALab%2Fnotebook%2FCAAP19_ComputationalLab.ipynb)
 A repo for storing scripts used in teaching modules.
 Designed by University of Chicago undergraduate student Christian Porras for use in the 2018 and 2019 Chicago Academic Achievement Program (CAAP) summer biology courses.
 
